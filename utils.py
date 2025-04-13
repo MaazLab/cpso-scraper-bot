@@ -243,8 +243,16 @@ def scrape_doctor_data(url, doc_extra_info_url):
 
     print("Extracting Specialization...")
     # Extract the specialization
-    specialization = doc_extra_info_soup.find('div', {'class':'scrp-specialtyname-value'}).text.strip() if doc_extra_info_soup.find('div', {'class':'scrp-specialtyname-value'}) else None
-    # print("specialization: ", specialization)
+    doctor_specialization = [ ]
+
+    specialization_div_specialities = doc_extra_info_soup.find('div', {'id':'specialties', 'tabindex':"-1"}).find_all('div', {'class':'scrp-specialtyname-value'})
+    if len(specialization_div_specialities) > 0:
+        for div in specialization_div_specialities:
+            doctor_specialization.append(div.text.strip())
+        print("Total Specializations: ", len(doctor_specialization))
+    else:
+        doctor_specialization = None
+        print("Total Specializations: 0")
 
     return {
         'FirstName': doc_first_name,
@@ -253,7 +261,7 @@ def scrape_doctor_data(url, doc_extra_info_url):
         'Location': doctor_locations,
         'Phone': doctor_phones,
         'Fax': doctor_fax,
-        'Specialization': specialization
+        'Specialization': doctor_specialization
     }
 
 
